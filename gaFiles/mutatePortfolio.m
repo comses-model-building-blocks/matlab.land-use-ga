@@ -23,26 +23,29 @@ function child = mutatePortfolio(parent, cropParameters, gAParameters)
             %calculate the fractional distribution of land, mutate one
             %element, rescale, and then recalculate the land distribution
             
-            parentSize = sum([parent{:,1}]);
-            minFrac = gAParameters.minSize / parentSize;
 
             childSize = [child{:,1}];
-            childSize = childSize/sum(childSize);
-            childSize(mutateRotation) = minFrac + (1 - minFrac) * rand();
-            count =1;
-            while (abs(sum(childSize) - 1) > eps | sum(childSize < minFrac) > 0)
-                temp = childSize - minFrac;
-                temp = -sum(temp(temp < 0));
-                childSize(childSize == max(childSize)) = childSize(childSize == max(childSize)) - temp;
-                childSize(childSize < minFrac) = minFrac;
+            if(length(childSize) > 1)  %if there is only one parcel, there is no mutation to do, just return the unmutated child
+                parentSize = sum([parent{:,1}]);
+                minFrac = gAParameters.minSize / parentSize;
+
                 childSize = childSize/sum(childSize);
-                count = count+1;
-                if(count > 100)
-                    f = 1;
+                childSize(mutateRotation) = minFrac + (1 - minFrac) * rand();
+                count =1;
+                while (abs(sum(childSize) - 1) > eps | sum(childSize < minFrac) > 0)
+                    temp = childSize - minFrac;
+                    temp = -sum(temp(temp < 0));
+                    childSize(childSize == max(childSize)) = childSize(childSize == max(childSize)) - temp;
+                    childSize(childSize < minFrac) = minFrac;
+                    childSize = childSize/sum(childSize);
+                    count = count+1;
+                    if(count > 100)
+                        f = 1;
+                    end
+
                 end
-                    
+                child(:,1) = num2cell(childSize*parentSize);
             end
-            child(:,1) = num2cell(childSize*parentSize);
 
 
         case 2 %Change the fraction of water allocated to a rotation

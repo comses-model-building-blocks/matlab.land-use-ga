@@ -73,11 +73,15 @@ for indexP = 1:size(portfolio,1)
     supplementWater = zeros(size(tempWater,1),0);
     try
     if(numReplicates < 1)
-        supplementWater = tempWater(:,randperm(size(tempWater,2),lengthRotation(indexP) - numCycles));
+        supplementWater = tempWater(:,ceil(size(tempWater,2)*rand(1,lengthRotation(indexP) - numCycles)));
     end
     catch
         f = 1;
     end
+    
+        startingPoints = startingPoints - elapsedTurns;
+    endingPoints = endingPoints - elapsedTurns;
+
     %as long as we don't have an empty rotation
     if(lengthRotation(indexP) > 0)
         
@@ -111,8 +115,17 @@ for indexP = 1:size(portfolio,1)
                 %yield per acre from estYield and add the discounted NPV to
                 %currentNPV
                 if(harvestTurn > elapsedTurns)
-                    currentYield = estYield(cropParameters, currentCrop, currentWater(startingPoints(indexC):harvestTurn));
-                    currentNPV = currentNPV + currentYield * cropParameters.crops(currentCrop).price * currentParcel{1} / ((1 + discountRate)^(harvestTurn - elapsedTurns));
+                    temp = zeros(harvestTurn - startingPoints(indexC) + 1,1);
+                    try
+                    temp(:) = currentWater(startingPoints(indexC):harvestTurn);
+                    catch
+                        f=1;
+                    end
+                    if(size(temp,1) == 1)
+                        f = 1;
+                    end
+                    currentYield = estYield(cropParameters, currentCrop, temp);
+                    currentNPV = currentNPV + currentYield * cropParameters.crops(currentCrop).price * currentParcel{1} / ((1 + discountRate)^(harvestTurn));
                 end
                 
                 %if the current crop has yet to be planted, subtract expected

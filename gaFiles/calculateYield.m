@@ -10,6 +10,8 @@ function yieldByCrop = calculateYield(currentRotation, cropParameters, startTurn
 
     yieldByCrop = zeros(length(cropParameters.crops),1);
     for indexI = 1:length(endingPoints)
-       yieldByCrop(currentRotation(indexI,2)) = yieldByCrop(currentRotation(indexI,2)) + estYield(cropParameters, currentRotation(indexI,2), water(startingPoints(indexI):endingPoints(indexI))); 
+        temp = zeros(endingPoints(indexI) - startingPoints(indexI) + 1,1);
+        temp(:) = water(startingPoints(indexI):endingPoints(indexI));
+       yieldByCrop(currentRotation(indexI,2)) = yieldByCrop(currentRotation(indexI,2)) + estYield(cropParameters, currentRotation(indexI,2), temp); 
     end
 end

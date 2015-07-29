@@ -68,27 +68,24 @@ end
 %don't let farmers over-divide their land.  remove parts until all
 %allocations can be greater than minsize
 
-child1Size = [child1{:,1}];
-child2Size = [child2{:,1}];
+child1Size = [child1{:,1}]';
+child2Size = [child2{:,1}]';
 
 while(sum(child1Size < minSize) > 0 | size(child1Size,1) > sum(child1Size) / minSize)
    child1(randperm(size(child1,1),1),:) = [];  %remove one random rotation
-   child1Size = [child1{:,1}];
+   child1Size = [child1{:,1}]';
    child1(:,1) = num2cell(child1Size/sum(child1Size)*parent1Size);
     %rescale the water fractions 
-    child1Size = [child1{:,2}];
+    child1Size = [child1{:,2}]';
     child1(:,2) = num2cell(child1Size/sum(child1Size));
 end
 
 while(sum(child2Size < minSize) > 0 | size(child2Size,1) > sum(child2Size) / minSize)
    child2(randperm(size(child2,1),1),:) = [];  %remove one random element
-   child2Size = [child2{:,1}];
+   child2Size = [child2{:,1}]';
    child2(:,1) = num2cell(child2Size/sum(child2Size)*parent2Size);
     %rescale the water fractions 
-    child2Size = [child2{:,2}];
+    child2Size = [child2{:,2}]';
     child2(:,2) = num2cell(child2Size/sum(child2Size));
 end
 
-if(sum([child1{:,1}]) > parent1Size + 0.00001 | sum([child2{:,1}]) > parent2Size + 0.00001)
-    f = 1;
-end
